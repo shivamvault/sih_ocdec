@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCDEC — SIH Team Member Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e17;
+    --bg-elev:#0f1524;
+    --card:#141b2d;
+    --card-hi:#1a2338;
+    --border:#262f47;
+    --border-hi:#39456a;
+    --violet:#8b5cf6;
+    --violet-dim:#5b3fa8;
+    --cyan:#22d3ee;
+    --text:#e8eaf0;
+    --text-dim:#8891a8;
+    --text-faint:#4d5670;
+    --danger:#f16565;
+    --success:#4ade80;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(139,92,246,0.10), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(34,211,238,0.08), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+
+  .wrap{max-width:920px;margin:0 auto;padding:56px 24px 100px;position:relative;z-index:1;}
+
+  /* header */
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:0.06em;
+    color:var(--cyan);
+    background:rgba(34,211,238,0.08);
+    border:1px solid rgba(34,211,238,0.25);
+    padding:6px 12px;border-radius:100px;
+    margin-bottom:22px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+
+  h1{
+    font-size:clamp(38px,6vw,58px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    line-height:1.04;
+    background:linear-gradient(120deg,#f4f5f9 20%,var(--cyan) 60%,var(--violet) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{
+    margin-top:16px;
+    max-width:560px;
+    color:var(--text-dim);
+    font-size:16.5px;
+  }
+  .sub b{color:var(--text);font-weight:600;}
+
+  .req-row{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;
+  }
+  .req-pill{
+    font-size:13px;font-family:'JetBrains Mono',monospace;
+    padding:7px 13px;border-radius:8px;
+    border:1px solid var(--border);background:var(--card);
+    color:var(--text-dim);
+  }
+  .req-pill.need{color:var(--violet);border-color:rgba(139,92,246,0.35);background:rgba(139,92,246,0.07);}
+  .req-pill.get{color:var(--cyan);border-color:rgba(34,211,238,0.35);background:rgba(34,211,238,0.07);}
+
+  /* section shell */
+  section{margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;}
+  .section-num{font-family:'JetBrains Mono',monospace;color:var(--text-faint);font-size:13px;}
+  .section-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;}
+  .section-note{color:var(--text-dim);font-size:14px;margin-top:-14px;margin-bottom:22px;}
+
+  /* day tabs */
+  .day-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .day-tab{
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    padding:9px 16px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--border);background:var(--card);color:var(--text-dim);
+    transition:all .15s ease;
+  }
+  .day-tab:hover{border-color:var(--border-hi);color:var(--text);}
+  .day-tab.active{
+    background:linear-gradient(135deg,var(--violet),var(--cyan));
+    color:#0a0e17;border-color:transparent;font-weight:600;
+  }
+
+  .legend{display:flex;gap:18px;margin-bottom:18px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+  .legend-swatch{width:11px;height:11px;border-radius:3px;}
+
+  .slot-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;
+  }
+  .slot{
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;
+    padding:13px 8px;border-radius:9px;text-align:center;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    cursor:pointer;transition:all .12s ease;
+    position:relative;
+  }
+  .slot:hover{border-color:var(--cyan);background:var(--card-hi);transform:translateY(-1px);}
+  .slot.booked{
+    background:rgba(241,101,101,0.06);border-color:rgba(241,101,101,0.25);
+    color:var(--text-faint);cursor:not-allowed;text-decoration:line-through;
+  }
+  .slot.booked:hover{transform:none;border-color:rgba(241,101,101,0.25);background:rgba(241,101,101,0.06);}
+  .slot.mine{
+    background:rgba(74,222,128,0.1);border-color:var(--success);color:var(--success);
+    cursor:default;text-decoration:none;font-weight:600;
+  }
+  .slot.mine:hover{transform:none;}
+
+  .loading-row{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:13px;padding:20px 0;}
+
+  /* contact cards */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.contact-grid{grid-template-columns:1fr;}}
+  .contact-card{
+    border:1px solid var(--border);background:var(--card);
+    border-radius:14px;padding:20px;
+    display:flex;flex-direction:column;gap:10px;
+    text-decoration:none;color:var(--text);
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .contact-card:hover{border-color:var(--border-hi);transform:translateY(-2px);}
+  .contact-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .contact-card.wa .contact-icon{background:rgba(74,222,128,0.12);color:var(--success);}
+  .contact-card.li .contact-icon{background:rgba(34,211,238,0.12);color:var(--cyan);}
+  .contact-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);letter-spacing:0.03em;}
+  .contact-value{font-weight:600;font-size:15.5px;}
+
+  footer{margin-top:80px;color:var(--text-faint);font-size:12.5px;font-family:'JetBrains Mono',monospace;text-align:center;}
+
+  /* modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(6,8,14,0.72);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    width:100%;max-width:440px;background:var(--bg-elev);
+    border:1px solid var(--border-hi);border-radius:18px;padding:28px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    max-height:88vh;overflow-y:auto;
+  }
+  .modal-slot-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--cyan);
+    background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);
+    padding:6px 11px;border-radius:100px;margin-bottom:16px;
+  }
+  .modal h2{font-family:'Space Grotesk',sans-serif;font-size:22px;margin-bottom:6px;}
+  .modal p.hint{color:var(--text-dim);font-size:13.5px;margin-bottom:20px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12.5px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);margin-bottom:7px;}
+  .field input[type=text], .field select{
+    width:100%;padding:11px 13px;border-radius:9px;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:14.5px;outline:none;
+  }
+  .field input:focus, .field select:focus{border-color:var(--cyan);}
+  .field.fixed-value{
+    padding:11px 13px;border-radius:9px;border:1px solid var(--border);
+    background:var(--card-hi);color:var(--text-dim);font-size:14.5px;
+  }
+  .phone-input-group{display:flex;align-items:stretch;border-radius:9px;overflow:hidden;border:1px solid var(--border);}
+  .phone-input-group:focus-within{border-color:var(--cyan);}
+  .phone-prefix{
+    display:flex;align-items:center;justify-content:center;padding:0 12px;
+    background:var(--card-hi);color:var(--text-dim);font-family:'JetBrains Mono',monospace;
+    font-size:14.5px;border-right:1px solid var(--border);flex-shrink:0;
+  }
+  .phone-input-group input{
+    flex:1;min-width:0;padding:11px 13px;border:none;background:var(--card);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:14.5px;outline:none;letter-spacing:0.03em;
+  }
+  .consent-row{
+    display:flex;gap:10px;align-items:flex-start;
+    padding:13px;border-radius:10px;background:var(--card);border:1px solid var(--border);
+    margin-bottom:20px;
+  }
+  .consent-row input{margin-top:3px;accent-color:var(--violet);width:16px;height:16px;flex-shrink:0;}
+  .consent-row span{font-size:13px;color:var(--text-dim);}
+  .modal-actions{display:flex;gap:10px;}
+  .btn{
+    flex:1;padding:12px 16px;border-radius:10px;font-weight:600;font-size:14.5px;
+    border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s ease, transform .1s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:linear-gradient(135deg,var(--violet),var(--cyan));color:#0a0e17;}
+  .btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
+  .error-msg{color:var(--danger);font-size:12.5px;margin-top:-10px;margin-bottom:14px;display:none;}
+
+  /* confirmation */
+  .confirm-icon{width:52px;height:52px;border-radius:14px;background:rgba(74,222,128,0.12);color:var(--success);
+    display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:16px;}
+  .confirm-slot{
+    font-family:'JetBrains Mono',monospace;background:var(--card);border:1px solid var(--border);
+    border-radius:10px;padding:12px 14px;margin:14px 0 20px;font-size:14px;color:var(--cyan);
+  }
+
+  /* hero layout + SIH badge */
+  .hero{position:relative;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;}
+  .hero-content{flex:1 1 260px;min-width:0;order:1;}
+  .sih-badge{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    width:74px;height:74px;flex-shrink:0;border-radius:50%;order:2;margin-left:auto;
+    border:1.5px solid var(--border-hi);
+    background:conic-gradient(from 180deg, rgba(139,92,246,0.18), rgba(34,211,238,0.18), rgba(139,92,246,0.18));
+    text-align:center;
+  }
+  .sih-badge .sih-top{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.05em;color:var(--text-dim);margin-top:12px;}
+  .sih-badge .sih-mid{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;background:linear-gradient(120deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1;}
+  .sih-badge .sih-bottom{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--text-faint);margin-bottom:10px;}
+
+  /* robot mascot */
+  .robot-holder{
+    position:absolute;top:-6px;right:100px;width:120px;height:130px;
+    animation:robotFloat 3.4s ease-in-out infinite;
+  }
+  @keyframes robotFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+  .robot-arm{transform-origin:64px 78px;animation:robotWave 2.1s ease-in-out infinite;}
+  @keyframes robotWave{0%,100%{transform:rotate(0deg);}25%{transform:rotate(-18deg);}50%{transform:rotate(4deg);}75%{transform:rotate(-10deg);}}
+  .robot-eye{animation:robotBlink 3.6s ease-in-out infinite;transform-origin:center;}
+  @keyframes robotBlink{0%,92%,100%{transform:scaleY(1);}95%{transform:scaleY(0.12);}}
+  .robot-antenna-dot{animation:robotPulse 1.6s ease-in-out infinite;}
+  @keyframes robotPulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  @media(max-width:760px){.robot-holder{display:none;}}
+
+  /* why-you field */
+  .field textarea{
+    width:100%;padding:11px 13px;border-radius:9px;resize:vertical;min-height:76px;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:14px;outline:none;line-height:1.45;
+  }
+  .field textarea:focus{border-color:var(--cyan);}
+  .char-count{font-size:11px;color:var(--text-faint);text-align:right;margin-top:4px;font-family:'JetBrains Mono',monospace;}
+
+  /* admin */
+  .admin-link{
+    background:none;border:none;color:var(--text-faint);font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;cursor:pointer;margin-top:10px;text-decoration:underline;text-underline-offset:3px;
+  }
+  .admin-link:hover{color:var(--text-dim);}
+  .admin-modal{max-width:760px;width:100%;}
+  .admin-table-wrap{max-height:50vh;overflow:auto;border:1px solid var(--border);border-radius:10px;margin:16px 0;}
+  table.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.admin-table th{
+    position:sticky;top:0;background:var(--card-hi);text-align:left;padding:10px 12px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--border);
+  }
+  table.admin-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  table.admin-table tr:last-child td{border-bottom:none;}
+  .admin-empty{color:var(--text-dim);font-size:13.5px;padding:14px 0;}
+
+  .admin-sort-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+  .admin-sort-label{font-size:11.5px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-right:2px;}
+  .sort-btn{
+    font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 13px;border-radius:8px;
+    border:1px solid var(--border);background:var(--card);color:var(--text-dim);cursor:pointer;
+    transition:all .12s ease;
+  }
+  .sort-btn:hover{border-color:var(--border-hi);color:var(--text);}
+  .sort-btn.active{
+    background:linear-gradient(135deg,var(--violet),var(--cyan));
+    color:#0a0e17;border-color:transparent;font-weight:600;
+  }
+
+  /* results section */
+  .results-note{color:var(--text-dim);font-size:14px;margin-bottom:18px;}
+  .countdown{display:flex;gap:12px;flex-wrap:wrap;}
+  .countdown-box{
+    flex:1;min-width:72px;background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:16px 10px;text-align:center;
+  }
+  .countdown-num{
+    font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;
+    background:linear-gradient(120deg,var(--cyan),var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .countdown-label{font-size:10.5px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:4px;letter-spacing:0.06em;}
+  .results-reveal{
+    padding:24px;border-radius:14px;border:1px solid rgba(74,222,128,0.3);
+    background:rgba(74,222,128,0.06);
+  }
+  .results-reveal h3{font-family:'Space Grotesk',sans-serif;font-size:20px;margin-bottom:8px;color:var(--success);}
+  .results-reveal p{color:var(--text-dim);font-size:14.5px;white-space:pre-wrap;}
+
+  /* admin result panel */
+  .admin-result-panel{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+  .admin-result-panel label{display:block;font-size:12.5px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);margin-bottom:7px;}
+  .admin-result-panel textarea{
+    width:100%;min-height:70px;padding:11px 13px;border-radius:9px;resize:vertical;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:14px;outline:none;line-height:1.45;
+  }
+  .admin-result-panel textarea:focus{border-color:var(--cyan);}
+  .admin-save-row{display:flex;justify-content:flex-end;margin-top:10px;gap:8px;align-items:center;}
+  .admin-save-status{font-size:12px;color:var(--success);font-family:'JetBrains Mono',monospace;opacity:0;transition:opacity .2s ease;}
+  .admin-save-status.show{opacity:1;}
+
+  /* admin security gate */
+  .gate-modal{max-width:360px;text-align:center;}
+  .gate-icon{
+    width:60px;height:60px;border-radius:50%;margin:0 auto 18px;
+    background:rgba(241,101,101,0.1);border:1px solid rgba(241,101,101,0.3);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .gate-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-bottom:6px;}
+  .gate-sub{color:var(--text-dim);font-size:13px;margin-bottom:24px;line-height:1.5;}
+  .gate-input{
+    width:100%;padding:13px 14px;border-radius:10px;
+    border:1px solid var(--border);background:var(--bg);color:var(--text);
+    font-family:'JetBrains Mono',monospace;font-size:16px;letter-spacing:0.3em;text-align:center;
+    outline:none;margin-bottom:10px;
+  }
+  .gate-input:focus{border-color:var(--danger);box-shadow:0 0 0 3px rgba(241,101,101,0.12);}
+  .gate-input.shake{animation:gateShake .4s ease;}
+  @keyframes gateShake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}40%{transform:translateX(7px);}
+    60%{transform:translateX(-5px);}80%{transform:translateX(4px);}
+  }
+  .gate-error{color:var(--danger);font-size:12.5px;min-height:16px;margin-bottom:14px;}
+  .gate-actions{display:flex;gap:10px;}
+
+  /* falling techy doodles */
+  .doodle-field{
+    position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;
+  }
+  .doodle{
+    position:absolute;top:-8vh;
+    font-family:'JetBrains Mono',monospace;
+    color:var(--cyan);
+    opacity:0;
+    user-select:none;
+    animation-name:doodleFall;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+    will-change:transform,opacity;
+  }
+  .doodle.violet{color:var(--violet);}
+  @keyframes doodleFall{
+    0%{transform:translateY(0) rotate(0deg);opacity:0;}
+    8%{opacity:0.16;}
+    92%{opacity:0.16;}
+    100%{transform:translateY(112vh) rotate(35deg);opacity:0;}
+  }
+  @media(max-width:640px){ .doodle{display:none;} } /* keep phones clean/fast */
+  @media(prefers-reduced-motion:reduce){ .doodle-field{display:none;} }
+
+  /* ===== responsive ===== */
+
+  /* tablet */
+  @media(max-width:900px){
+    .wrap{padding:44px 22px 80px;}
+    section{margin-top:52px;}
+  }
+
+  /* small tablet / large phone */
+  @media(max-width:640px){
+    .wrap{padding:36px 18px 70px;}
+    h1{font-size:clamp(32px,10vw,48px);}
+    .sub{font-size:15.5px;}
+    .sih-badge{width:64px;height:64px;}
+    .sih-badge .sih-mid{font-size:13px;}
+    .req-row{margin-top:22px;gap:8px;}
+    .req-pill{font-size:12px;padding:6px 11px;}
+    section{margin-top:44px;}
+    .section-title{font-size:19px;}
+    .slot-grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;}
+    .slot{padding:11px 6px;font-size:12.5px;}
+    .day-tab{padding:8px 13px;font-size:12.5px;}
+    .legend{gap:12px;}
+    .contact-card{padding:16px;}
+    .modal{padding:22px;border-radius:16px;}
+    .admin-table-wrap{overflow-x:auto;}
+    table.admin-table{min-width:720px;}
+  }
+
+  /* phone */
+  @media(max-width:420px){
+    .wrap{padding:28px 14px 60px;}
+    .eyebrow{font-size:11px;padding:5px 10px;}
+    h1{font-size:clamp(28px,11vw,38px);}
+    .sub{font-size:14.5px;}
+    .hero{gap:12px;}
+    .sih-badge{width:56px;height:56px;}
+    .sih-badge .sih-top,.sih-badge .sih-bottom{font-size:6.5px;}
+    .sih-badge .sih-mid{font-size:11px;}
+    .slot-grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:7px;}
+    .slot{padding:10px 4px;font-size:11.5px;}
+    .day-tabs{gap:6px;}
+    .day-tab{padding:7px 11px;font-size:12px;}
+    .contact-grid{gap:10px;}
+    .modal{padding:18px;}
+    .modal h2{font-size:19px;}
+    .modal-actions{flex-wrap:wrap;}
+    .modal-actions .btn{flex:1 1 100%;}
+    .field input[type=text], .field select, .field textarea{font-size:16px;} /* prevents iOS zoom-on-focus */
+    footer{margin-top:56px;font-size:11.5px;}
+    .countdown-box{min-width:60px;padding:12px 6px;}
+    .countdown-num{font-size:21px;}
+    .countdown-label{font-size:9px;}
+    .results-reveal{padding:18px;}
+  }
+
+  /* very small phones */
+  @media(max-width:340px){
+    .slot-grid{grid-template-columns:repeat(auto-fill,minmax(68px,1fr));}
+    .req-pill{font-size:11px;padding:5px 9px;}
+  }
+
+  /* reduced motion */
+  @media(prefers-reduced-motion:reduce){
+    .robot-holder,.robot-arm,.robot-eye,.robot-antenna-dot,.eyebrow .dot{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="doodle-field" id="doodleField" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="sih-badge">
+      <span class="sih-top">TEAM</span>
+      <span class="sih-mid">SIH<br>2026</span>
+      <span class="sih-bottom">HACKATHON</span>
+    </div>
+
+    <div class="robot-holder" aria-hidden="true">
+      <svg viewBox="0 0 120 130" width="120" height="130">
+        <ellipse cx="60" cy="120" rx="22" ry="4" fill="#000" opacity="0.25"/>
+        <rect x="55" y="16" width="10" height="14" rx="3" fill="#39456a"/>
+        <circle class="robot-antenna-dot" cx="60" cy="14" r="5" fill="#22d3ee"/>
+        <rect x="30" y="30" width="60" height="46" rx="16" fill="#141b2d" stroke="#39456a" stroke-width="2"/>
+        <g class="robot-eye">
+          <circle cx="48" cy="53" r="5.5" fill="#22d3ee"/>
+          <circle cx="72" cy="53" r="5.5" fill="#8b5cf6"/>
+        </g>
+        <rect x="46" y="64" width="28" height="4" rx="2" fill="#39456a"/>
+        <rect x="34" y="80" width="52" height="38" rx="14" fill="#1a2338" stroke="#39456a" stroke-width="2"/>
+        <rect x="48" y="92" width="24" height="14" rx="4" fill="#0f1524" stroke="#262f47"/>
+        <circle cx="60" cy="99" r="4" fill="#22d3ee" class="robot-antenna-dot"/>
+        <g class="robot-arm">
+          <rect x="14" y="82" width="10" height="30" rx="5" fill="#1a2338" stroke="#39456a" stroke-width="2"/>
+          <circle cx="19" cy="112" r="6" fill="#8b5cf6"/>
+        </g>
+        <rect x="96" y="86" width="10" height="26" rx="5" fill="#1a2338" stroke="#39456a" stroke-width="2"/>
+        <circle cx="101" cy="112" r="6" fill="#22d3ee"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="eyebrow"><span class="dot"></span>RECRUITING · SIH TEAM MEMBER</div>
+      <h1>OCDEC</h1>
+      <p class="sub">We're a <b>4-person team gearing up for Smart India Hackathon</b> and we need one more member — girl or boy, doesn't matter, drive does. Book a quick 10-minute slot below and let's talk.</p>
+    </div>
+  </div>
+
+  <div class="req-row">
+    <span class="req-pill need">needs · hardworking</span>
+    <span class="req-pill need">needs · patient</span>
+    <span class="req-pill get">gets · tech + startup exposure</span>
+    <span class="req-pill get">gets · team &amp; networking</span>
+    <span class="req-pill get">gets · prizes + next SIH round</span>
+  </div>
+
+  <section id="booking">
+    <div class="section-head">
+      <span class="section-num mono">01</span>
+      <span class="section-title">Pick your interview slot</span>
+    </div>
+    <p class="section-note">10-minute rounds, 3:00 PM – 5:00 PM daily, Aug 11–13. Pick whatever's open.</p>
+
+    <div class="day-tabs" id="dayTabs"></div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--card);border:1px solid var(--border);"></span>open</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:rgba(241,101,101,0.15);border:1px solid rgba(241,101,101,0.4);"></span>booked</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:rgba(74,222,128,0.2);border:1px solid var(--success);"></span>your slot</span>
+    </div>
+
+    <div id="slotGrid" class="slot-grid">
+      <div class="loading-row">loading available slots…</div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="section-head">
+      <span class="section-num mono">02</span>
+      <span class="section-title">Result declaration</span>
+    </div>
+    <p class="results-note">Who's in, announced here — and on WhatsApp.</p>
+    <div id="resultsPanel"></div>
+  </section>
+
+  <section id="contact">
+    <div class="section-head">
+      <span class="section-num mono">03</span>
+      <span class="section-title">Or reach out directly</span>
+    </div>
+    <div class="contact-grid">
+      <a class="contact-card wa" href="https://wa.me/917800050xxx" target="_blank" rel="noopener">
+        <div class="contact-icon">💬</div>
+        <div class="contact-label">WHATSAPP</div>
+        <div class="contact-value">Message on WhatsApp</div>
+      </a>
+      <a class="contact-card li" href="https://www.linkedin.com/in/shivam-vault/" target="_blank" rel="noopener">
+        <div class="contact-icon">in</div>
+        <div class="contact-label">LINKEDIN</div>
+        <div class="contact-value">Connect on LinkedIn</div>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    OCDEC © 2026 — SIH team member registration<br>
+    <button class="admin-link" id="adminLinkBtn">view registrations (admin)</button>
+  </footer>
+</div>
+
+<!-- Booking modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-slot-badge" id="modalSlotBadge">SLOT</div>
+    <h2>Almost there</h2>
+    <p class="hint">Fill this in and we'll lock your slot + open WhatsApp with your confirmation.</p>
+
+    <div class="field">
+      <label>Full name</label>
+      <input type="text" id="fName" placeholder="e.g. Aditi Sharma" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Course</label>
+      <div class="fixed-value">BCA</div>
+    </div>
+    <div class="field">
+      <label>Semester</label>
+      <select id="fSem">
+        <option value="">Select semester</option>
+        <option>1</option><option>2</option><option>3</option>
+        <option>4</option><option>5</option><option>6</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Section <span style="color:var(--text-faint);">(optional)</span></label>
+      <input type="text" id="fSection" placeholder="e.g. A" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Phone number</label>
+      <div class="phone-input-group">
+        <span class="phone-prefix">+91</span>
+        <input type="tel" id="fPhone" placeholder="98765 43210" autocomplete="tel" inputmode="numeric" maxlength="10">
+      </div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="fEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label>Why should we pick you over others?</label>
+      <textarea id="fWhy" maxlength="280" placeholder="One or two lines — a relevant skill, project, or what you'd bring to the team."></textarea>
+      <div class="char-count"><span id="fWhyCount">0</span>/280</div>
+    </div>
+
+    <div class="consent-row">
+      <input type="checkbox" id="fConsent">
+      <span>I confirm I can commit to dedicated, hardworking effort for whatever the team needs through the SIH journey — not just show up for the demo.</span>
+    </div>
+
+    <div class="error-msg" id="formError">Please fill in every field and check the consent box.</div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn">Book slot</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation modal -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <div class="confirm-icon">✓</div>
+    <h2>You're booked</h2>
+    <p class="hint">Your interview slot is locked in.</p>
+    <div class="confirm-slot" id="confirmSlotText"></div>
+    <p class="hint" style="margin-bottom:18px;">We're opening WhatsApp with a message pre-filled so Shivam gets your confirmation directly. If it doesn't open automatically, tap the button below.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="closeConfirmBtn">Close</button>
+      <a class="btn btn-primary" id="waConfirmBtn" style="text-decoration:none;text-align:center;" target="_blank" rel="noopener">Open WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- Admin security gate -->
+<div class="overlay" id="gateOverlay">
+  <div class="modal gate-modal">
+    <div class="gate-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="5" y="11" width="14" height="10" rx="2" stroke="#f16565" stroke-width="1.8"/>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="#f16565" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="16" r="1.6" fill="#f16565"/>
+      </svg>
+    </div>
+    <div class="gate-title">Restricted access</div>
+    <p class="gate-sub">This area holds registrant contact details. Enter the admin passcode to continue.</p>
+    <input type="password" class="gate-input" id="gateInput" placeholder="••••••••" autocomplete="off">
+    <div class="gate-error" id="gateError"></div>
+    <div class="gate-actions">
+      <button class="btn btn-ghost" id="gateCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="gateSubmitBtn">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin modal -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal admin-modal">
+    <h2>Registrations</h2>
+    <p class="hint">Everyone who's booked a slot so far.</p>
+
+    <div class="admin-result-panel">
+      <label>Result announcement (goes live publicly Aug 13, 10:00 PM IST)</label>
+      <textarea id="adminResultText" placeholder="e.g. Congrats to Aditi Sharma (BCA Sem 4) — you're our newest OCDEC member! Others, huge thanks for showing up — we'll keep you in mind."></textarea>
+      <div class="admin-save-row">
+        <span class="admin-save-status" id="adminSaveStatus">saved ✓</span>
+        <button class="btn btn-primary" id="saveResultBtn" style="flex:none;padding:9px 18px;">Save announcement</button>
+      </div>
+    </div>
+
+    <div class="admin-sort-row">
+      <span class="admin-sort-label">Sort by</span>
+      <button class="sort-btn" data-field="time">Time</button>
+      <button class="sort-btn" data-field="name">Name</button>
+      <button class="sort-btn" data-field="semester">Year / Sem</button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="adminTable">
+        <thead>
+          <tr><th>Name</th><th>Course</th><th>Sem</th><th>Section</th><th>Phone</th><th>Email</th><th>Slot</th><th>Why them</th></tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+      <div class="admin-empty" id="adminEmpty" style="display:none;">No registrations yet.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="closeAdminBtn">Close</button>
+      <button class="btn btn-primary" id="refreshAdminBtn">Refresh</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, getDocs, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// ====== PASTE YOUR FIREBASE CONFIG HERE ======
+// Firebase console → Project settings → General → Your apps → SDK setup and configuration
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBcr7UNP6w3EEBZomRpixKHVggjzfC2fXY",
+  authDomain: "team-ocdec.firebaseapp.com",
+  projectId: "team-ocdec",
+  storageBucket: "team-ocdec.firebasestorage.app",
+  messagingSenderId: "857679547075",
+  appId: "1:857679547075:web:eb85b524811f2f87797076"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// ==============================================
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+// ---- falling techy doodles (decorative, low-key background) ----
+(function initDoodles() {
+  const field = document.getElementById("doodleField");
+  if (!field) return;
+  const symbols = [
+    "{ }", "</>", "01", "10", "[ ]", "//", "=>", "#", "01001", "( )", "~", "01010",
+    "O", "C", "D", "E", "C", "0x1A", "&&", "!=", "$_", "::", "01100", "<>"
+  ];
+  const count = 22;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "doodle" + (Math.random() > 0.5 ? " violet" : "");
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    el.style.left = Math.random() * 100 + "%";
+    el.style.fontSize = (11 + Math.random() * 8).toFixed(0) + "px";
+    const duration = 22 + Math.random() * 26; // 22–48s per fall
+    el.style.animationDuration = duration.toFixed(1) + "s";
+    el.style.animationDelay = "-" + (Math.random() * duration).toFixed(1) + "s"; // spread across screen on load
+    field.appendChild(el);
+  }
+})();
+
+const WHATSAPP_NUMBER = "917800050xxx"; // no + or spaces, for wa.me links
+
+// ---- generate slots: Aug 10-14 2026, 4:00PM-6:00PM, 5 min each ----
+const DAYS = [
+  { date: "2026-08-11", label: "Tue, Aug 11" },
+  { date: "2026-08-12", label: "Wed, Aug 12" },
+  { date: "2026-08-13", label: "Thu, Aug 13" },
+];
+
+function formatTime(h, m) {
+  const period = h >= 12 ? "PM" : "AM";
+  let hh = h % 12; if (hh === 0) hh = 12;
+  return `${hh}:${m.toString().padStart(2,"0")} ${period}`;
+}
+
+function slotsForDay() {
+  const slots = [];
+  let h = 15, m = 0;
+  while (h < 17) {
+    slots.push({ time: formatTime(h, m), h, m });
+    m += 10;
+    if (m >= 60) { m = 0; h += 1; }
+  }
+  return slots;
+}
+const DAY_SLOTS = slotsForDay();
+
+let activeDay = DAYS[0].date;
+let bookings = {}; // key: "date_time" -> {name, course, semester}
+let myBookingKey = null;
+let pendingKey = null;
+
+const dayTabsEl = document.getElementById("dayTabs");
+const slotGridEl = document.getElementById("slotGrid");
+
+function renderDayTabs() {
+  dayTabsEl.innerHTML = "";
+  DAYS.forEach(d => {
+    const tab = document.createElement("div");
+    tab.className = "day-tab" + (d.date === activeDay ? " active" : "");
+    tab.textContent = d.label;
+    tab.onclick = () => { activeDay = d.date; renderDayTabs(); renderSlots(); };
+    dayTabsEl.appendChild(tab);
+  });
+}
+
+function renderSlots() {
+  slotGridEl.innerHTML = "";
+  DAY_SLOTS.forEach(s => {
+    const key = `${activeDay}_${s.time}`;
+    const el = document.createElement("div");
+    el.className = "slot";
+    el.textContent = s.time;
+    if (bookings[key]) {
+      if (key === myBookingKey) {
+        el.classList.add("mine");
+        el.textContent = s.time + " ✓";
+      } else {
+        el.classList.add("booked");
+      }
+    } else {
+      el.onclick = () => openBookingModal(key, s.time, activeDay);
+    }
+    slotGridEl.appendChild(el);
+  });
+}
+
+async function loadBookings() {
+  renderDayTabs();
+  renderSlots();
+  // realtime listener — updates for every visitor the moment anyone books
+  onSnapshot(collection(db, "bookings"), (snap) => {
+    bookings = {};
+    snap.forEach(d => { bookings[d.id] = d.data(); });
+    renderSlots();
+  }, (err) => {
+    console.error("bookings listener error:", err);
+  });
+}
+
+async function saveBooking(key, data) {
+  try {
+    // setDoc on an existing doc = "update", which Firestore rules deny.
+    // This makes double-booking impossible even if two people click at the same instant.
+    await setDoc(doc(db, "bookings", key), data);
+    return true;
+  } catch (e) {
+    return false; // permission-denied (slot taken) or network error
+  }
+}
+
+// ---- modal logic ----
+const overlay = document.getElementById("overlay");
+const modalSlotBadge = document.getElementById("modalSlotBadge");
+const fName = document.getElementById("fName");
+const fSem = document.getElementById("fSem");
+const fSection = document.getElementById("fSection");
+const fPhone = document.getElementById("fPhone");
+const fEmail = document.getElementById("fEmail");
+const fWhy = document.getElementById("fWhy");
+const fWhyCount = document.getElementById("fWhyCount");
+const fConsent = document.getElementById("fConsent");
+const formError = document.getElementById("formError");
+const submitBtn = document.getElementById("submitBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+
+fWhy.addEventListener("input", () => { fWhyCount.textContent = fWhy.value.length; });
+fPhone.addEventListener("input", () => {
+  fPhone.value = fPhone.value.replace(/\D/g, "").slice(0, 10);
+});
+
+let pendingDayLabel = "";
+let pendingTime = "";
+
+function openBookingModal(key, time, date) {
+  pendingKey = key;
+  pendingTime = time;
+  pendingDayLabel = DAYS.find(d => d.date === date).label;
+  modalSlotBadge.textContent = `${pendingDayLabel.toUpperCase()} · ${time}`;
+  fName.value = ""; fSem.value = ""; fSection.value = ""; fPhone.value = ""; fEmail.value = "";
+  fWhy.value = ""; fWhyCount.textContent = "0"; fConsent.checked = false;
+  formError.style.display = "none";
+  overlay.classList.add("open");
+  setTimeout(() => fName.focus(), 100);
+}
+cancelBtn.onclick = () => overlay.classList.remove("open");
+overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.remove("open"); };
+
+submitBtn.onclick = async () => {
+  const name = fName.value.trim();
+  const sem = fSem.value;
+  const section = fSection.value.trim();
+  const phone = fPhone.value.trim();
+  const email = fEmail.value.trim();
+  const why = fWhy.value.trim();
+
+  const phoneOk = /^[6-9]\d{9}$/.test(phone);
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  if (!name || !sem || !phone || !email || !why || !fConsent.checked) {
+    formError.textContent = "Please fill in every required field and check the consent box.";
+    formError.style.display = "block";
+    return;
+  }
+  if (!phoneOk) {
+    formError.textContent = "Enter a valid 10-digit mobile number.";
+    formError.style.display = "block";
+    return;
+  }
+  if (!emailOk) {
+    formError.textContent = "That email doesn't look right — check and try again.";
+    formError.style.display = "block";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Booking…";
+
+  const ok = await saveBooking(pendingKey, {
+    name, course: "BCA", semester: sem, section, phone: "+91" + phone, email, why,
+    bookedAt: new Date().toISOString()
+  });
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Book slot";
+
+  if (!ok) {
+    formError.textContent = "Someone just booked this slot — pick another one.";
+    formError.style.display = "block";
+    renderSlots();
+    return;
+  }
+
+  myBookingKey = pendingKey;
+  overlay.classList.remove("open");
+  renderSlots();
+  showConfirmation(name, sem, why, pendingDayLabel, pendingTime);
+};
+
+// ---- confirmation + whatsapp ----
+const confirmOverlay = document.getElementById("confirmOverlay");
+const confirmSlotText = document.getElementById("confirmSlotText");
+const waConfirmBtn = document.getElementById("waConfirmBtn");
+const closeConfirmBtn = document.getElementById("closeConfirmBtn");
+
+closeConfirmBtn.onclick = () => confirmOverlay.classList.remove("open");
+
+function showConfirmation(name, sem, why, dayLabel, time) {
+  confirmSlotText.textContent = `${dayLabel} · ${time}`;
+  const message = `Hi Shivam! I've booked a slot for the OCDEC SIH Team Member Interview on ${dayLabel} at ${time}. My name is ${name}, I'm from BCA Semester ${sem}. Why you should pick me: ${why} Looking forward to it!`;
+  const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  waConfirmBtn.href = waLink;
+  confirmOverlay.classList.add("open");
+  // try auto-opening WhatsApp
+  const win = window.open(waLink, "_blank");
+  if (!win) {
+    // popup blocked — user will use the button instead, no action needed
+  }
+}
+
+loadBookings();
+
+// ---- admin panel ----
+const ADMIN_PASSCODE = "ocdec2026"; // change this to whatever you like
+const adminOverlay = document.getElementById("adminOverlay");
+const adminLinkBtn = document.getElementById("adminLinkBtn");
+const closeAdminBtn = document.getElementById("closeAdminBtn");
+const refreshAdminBtn = document.getElementById("refreshAdminBtn");
+const adminTableBody = document.getElementById("adminTableBody");
+const adminEmpty = document.getElementById("adminEmpty");
+let adminUnlocked = false;
+
+const gateOverlay = document.getElementById("gateOverlay");
+const gateInput = document.getElementById("gateInput");
+const gateError = document.getElementById("gateError");
+const gateSubmitBtn = document.getElementById("gateSubmitBtn");
+const gateCancelBtn = document.getElementById("gateCancelBtn");
+
+adminLinkBtn.onclick = async () => {
+  if (adminUnlocked) {
+    await openAdminPanel();
+    return;
+  }
+  gateInput.value = "";
+  gateError.textContent = "";
+  gateInput.classList.remove("shake");
+  gateOverlay.classList.add("open");
+  setTimeout(() => gateInput.focus(), 100);
+};
+
+gateCancelBtn.onclick = () => gateOverlay.classList.remove("open");
+gateOverlay.onclick = (e) => { if (e.target === gateOverlay) gateOverlay.classList.remove("open"); };
+gateInput.addEventListener("keydown", (e) => { if (e.key === "Enter") gateSubmitBtn.click(); });
+
+gateSubmitBtn.onclick = async () => {
+  if (gateInput.value === ADMIN_PASSCODE) {
+    adminUnlocked = true;
+    gateOverlay.classList.remove("open");
+    await openAdminPanel();
+  } else {
+    gateError.textContent = "Incorrect passcode. Try again.";
+    gateInput.classList.remove("shake");
+    void gateInput.offsetWidth; // restart animation
+    gateInput.classList.add("shake");
+    gateInput.value = "";
+    gateInput.focus();
+  }
+};
+
+async function openAdminPanel() {
+  adminOverlay.classList.add("open");
+  adminResultText.value = cachedResultText;
+  await renderAdminTable();
+}
+
+closeAdminBtn.onclick = () => adminOverlay.classList.remove("open");
+adminOverlay.onclick = (e) => { if (e.target === adminOverlay) adminOverlay.classList.remove("open"); };
+refreshAdminBtn.onclick = renderAdminTable;
+
+let adminSortField = "time";
+let adminSortDir = "asc";
+let latestRows = [];
+
+document.querySelectorAll(".sort-btn").forEach(btn => {
+  btn.onclick = () => {
+    const field = btn.dataset.field;
+    if (adminSortField === field) {
+      adminSortDir = adminSortDir === "asc" ? "desc" : "asc";
+    } else {
+      adminSortField = field;
+      adminSortDir = "asc";
+    }
+    updateSortButtons();
+    renderSortedRows();
+  };
+});
+
+function updateSortButtons() {
+  document.querySelectorAll(".sort-btn").forEach(btn => {
+    const isActive = btn.dataset.field === adminSortField;
+    btn.classList.toggle("active", isActive);
+    const base = btn.textContent.replace(/ [▲▼]$/, "");
+    btn.textContent = isActive ? `${base} ${adminSortDir === "asc" ? "▲" : "▼"}` : base;
+  });
+}
+
+async function renderAdminTable() {
+  let data = {};
+  try {
+    const snap = await getDocs(collection(db, "bookings"));
+    snap.forEach(d => { data[d.id] = d.data(); });
+  } catch (e) { data = {}; }
+
+  latestRows = Object.entries(data).map(([key, v]) => {
+    const [date, time] = key.split("_");
+    const dayLabel = (DAYS.find(d => d.date === date) || {}).label || date;
+    const slotObj = DAY_SLOTS.find(s => s.time === time);
+    const minutes = slotObj ? slotObj.h * 60 + slotObj.m : 0;
+    return { ...v, slot: `${dayLabel} · ${time}`, sortTimeKey: `${date}_${String(minutes).padStart(4, "0")}` };
+  });
+
+  updateSortButtons();
+  renderSortedRows();
+}
+
+function renderSortedRows() {
+  const mul = adminSortDir === "asc" ? 1 : -1;
+  const rows = latestRows.slice().sort((a, b) => {
+    let av, bv;
+    if (adminSortField === "time") { av = a.sortTimeKey; bv = b.sortTimeKey; }
+    else if (adminSortField === "name") { av = (a.name || "").toLowerCase(); bv = (b.name || "").toLowerCase(); }
+    else if (adminSortField === "semester") { av = Number(a.semester) || 0; bv = Number(b.semester) || 0; }
+    if (av < bv) return -1 * mul;
+    if (av > bv) return 1 * mul;
+    return 0;
+  });
+
+  adminTableBody.innerHTML = "";
+  if (rows.length === 0) {
+    adminEmpty.style.display = "block";
+    return;
+  }
+  adminEmpty.style.display = "none";
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${escapeHtml(r.name || "")}</td><td>${escapeHtml(r.course || "")}</td><td>${escapeHtml(r.semester || "")}</td><td>${escapeHtml(r.section || "—")}</td><td class="mono">${escapeHtml(r.phone || "")}</td><td>${escapeHtml(r.email || "")}</td><td class="mono">${escapeHtml(r.slot || "")}</td><td>${escapeHtml(r.why || "")}</td>`;
+    adminTableBody.appendChild(tr);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---- results declaration ----
+const RESULTS_TARGET = new Date("2026-08-13T22:00:00+05:30").getTime(); // Aug 13, 10:00 PM IST
+const resultsPanel = document.getElementById("resultsPanel");
+let cachedResultText = "";
+
+function watchResultText() {
+  onSnapshot(doc(db, "meta", "result"), (snap) => {
+    cachedResultText = snap.exists() ? (snap.data().text || "") : "";
+    renderResultsPanel();
+  }, (err) => {
+    console.error("result listener error:", err);
+  });
+}
+
+function renderResultsPanel() {
+  const diff = RESULTS_TARGET - Date.now();
+  if (diff > 0) {
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff / 3600000) % 24);
+    const m = Math.floor((diff / 60000) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    resultsPanel.innerHTML = `
+      <p class="results-note">Results drop Aug 13, 2026 · 10:00 PM IST</p>
+      <div class="countdown">
+        <div class="countdown-box"><div class="countdown-num">${d}</div><div class="countdown-label">DAYS</div></div>
+        <div class="countdown-box"><div class="countdown-num">${String(h).padStart(2,"0")}</div><div class="countdown-label">HOURS</div></div>
+        <div class="countdown-box"><div class="countdown-num">${String(m).padStart(2,"0")}</div><div class="countdown-label">MIN</div></div>
+        <div class="countdown-box"><div class="countdown-num">${String(s).padStart(2,"0")}</div><div class="countdown-label">SEC</div></div>
+      </div>`;
+  } else {
+    resultsPanel.innerHTML = `
+      <div class="results-reveal">
+        <h3>🎉 Results are out</h3>
+        <p>${cachedResultText ? escapeHtml(cachedResultText) : "The team is finalising the announcement — check back shortly or watch WhatsApp."}</p>
+      </div>`;
+  }
+}
+
+async function initResults() {
+  renderResultsPanel();
+  watchResultText();
+  setInterval(renderResultsPanel, 1000);
+}
+initResults();
+
+// admin: result announcement editor
+const adminResultText = document.getElementById("adminResultText");
+const saveResultBtn = document.getElementById("saveResultBtn");
+const adminSaveStatus = document.getElementById("adminSaveStatus");
+
+saveResultBtn.onclick = async () => {
+  const val = adminResultText.value.trim();
+  saveResultBtn.disabled = true;
+  saveResultBtn.textContent = "Saving…";
+  try {
+    await setDoc(doc(db, "meta", "result"), {
+      text: val,
+      passcode: ADMIN_PASSCODE, // required by Firestore security rules — see setup notes
+      updatedAt: new Date().toISOString()
+    });
+    adminSaveStatus.classList.add("show");
+    setTimeout(() => adminSaveStatus.classList.remove("show"), 2200);
+  } catch (e) {
+    alert("Could not save — check your Firestore rules and connection, then try again.");
+  }
+  saveResultBtn.disabled = false;
+  saveResultBtn.textContent = "Save announcement";
+};
+</script>
+
+</body>
+</html>
